@@ -1,5 +1,6 @@
 package com.simplemobiletools.camera.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.hardware.SensorManager
@@ -8,7 +9,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
+import android.view.View
 import android.widget.RelativeLayout
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -26,12 +29,30 @@ import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.Release
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private val FADE_DELAY = 5000L
     private val CAPTURE_ANIMATION_DURATION = 100L
 
     lateinit var mTimerHandler: Handler
+    ////////////////////////////////////////////////
+    //private var TIME_STAMP_UPDATE_INTERVAL = 1000
+    public var txtDate: TextView? =null
+    public var sdf: SimpleDateFormat? = null
+    public val handler = Handler()
+    public var runnableSetDateText : Runnable = object : Runnable {
+        override fun run() {
+            txtDate!!.text = sdf!!.format(Date())
+            handler.postDelayed(this,1000)
+        }
+    }
+
+    ////////////////////////////////////////////////
     private lateinit var mOrientationEventListener: OrientationEventListener
     private lateinit var mFocusCircleView: FocusCircleView
     private lateinit var mFadeHandler: Handler
@@ -46,6 +67,7 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
     private var mCurrVideoRecTimer = 0
     var mLastHandledOrientation = 0
 
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
@@ -55,13 +77,25 @@ class MainActivity : SimpleActivity(), PhotoProcessor.MediaSavedListener {
         useDynamicTheme = false
         super.onCreate(savedInstanceState)
         appLaunched(BuildConfig.APPLICATION_ID)
+
+        //txtDate = findViewById<View>(R.id.txtDate) as TextView
+        //sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        //txtDate!!.text = sdf!!.format(Date())
+        //handler.postDelayed(runnableSetDateText,1000)
+
         requestWindowFeature(Window.FEATURE_NO_TITLE)
+
 
         initVariables()
         tryInitCamera()
         supportActionBar?.hide()
         checkWhatsNewDialog()
         setupOrientationEventListener()
+
+        txtDate = findViewById<View>(R.id.txtDate) as TextView
+        sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        txtDate!!.text = sdf!!.format(Date())
+        handler.postDelayed(runnableSetDateText,1000)
     }
 
     override fun onResume() {

@@ -84,14 +84,29 @@
 
     </LinearLayout>
 
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerHorizontal="true"
+
+        android:layout_marginTop="5dp"
+        android:text="2017.3.7"
+        android:textSize="20sp"
+        android:textColor="#fff"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/video_rec_curr_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_holder"
+        android:layout_above="@+id/txtDate"
         android:layout_centerHorizontal="true"
         android:text="00:00"
         android:textColor="@android:color/white"
         android:visibility="gone"/>
+
 
 </RelativeLayout>
